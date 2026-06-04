@@ -1,0 +1,3 @@
+import { Card, ProgressBar, Text, Badge } from '@fluentui/react-components';
+import type { Dashboard as DashboardType } from '../types';
+export function Dashboard({data}:{data:DashboardType}){return <section className="grid"><Card><Text weight="semibold">Productivity Metrics</Text><div className="metrics"><span>Total {data.total_tasks}</span><span>Pending {data.pending_tasks}</span><span>Overdue {data.overdue_tasks}</span></div><ProgressBar value={data.completion_rate/100}/><Text>{data.completion_rate}% completion • Avg resolution {data.average_resolution_hours}h</Text></Card><Card><Text weight="semibold">Pendency Buckets</Text>{Object.entries(data.aging_buckets).map(([k,v])=><Badge key={k} appearance={v?'filled':'outline'}>{k}: {v}</Badge>)}</Card></section>}
