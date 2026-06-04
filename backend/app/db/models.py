@@ -24,7 +24,7 @@ class EmailMessage(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     graph_id: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     conversation_id: Mapped[str | None] = mapped_column(String(255), index=True)
-    folder: Mapped[str] = mapped_column(String(500), index=True)
+    folder: Mapped[str] = mapped_column(String(64), index=True)
     sender: Mapped[str | None] = mapped_column(String(255))
     subject: Mapped[str] = mapped_column(String(500), default="")
     body_preview: Mapped[str | None] = mapped_column(Text)

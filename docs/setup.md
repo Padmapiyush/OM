@@ -27,15 +27,3 @@ npm run dev
 ## Outlook sideload
 
 Use `manifests/outlook-addin.xml` with Outlook's add-in sideload flow. The manifest points to the local HTTPS frontend and the frontend calls the local FastAPI service at `127.0.0.1:8765`.
-
-## Hierarchical Outlook folders
-
-The local service supports nested Outlook folders through Microsoft Graph folder ids and paths. To sync the Inbox and every child folder under it, call:
-
-```powershell
-Invoke-RestMethod -Method Post `
-  -Uri "http://127.0.0.1:8765/api/sync/graph?folder=Inbox&include_subfolders=true" `
-  -Headers @{ Authorization = "Bearer <Microsoft Graph token>" }
-```
-
-To sync a specific nested folder, pass its path, for example `Inbox/Important`, `System Log/Escalator`, or `Contract Management/Automation Project`.

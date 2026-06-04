@@ -24,7 +24,3 @@ python -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8765
 ```
 
 Health check: `http://127.0.0.1:8765/health`.
-
-## Folder hierarchy support
-
-Mailbox preferences can include top-level folders or nested folder paths. The backend resolves both Graph folder ids and human-readable paths, then stores the full folder path with each message so users can filter or audit where a task originated.

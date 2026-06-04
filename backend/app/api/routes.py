@@ -27,30 +27,17 @@ async def ingest_email(email: EmailIn, db: Session = Depends(get_db)):
     return task
 
 
-@router.get("/mail-folders")
-async def list_mail_folders(include_hidden: bool = False, authorization: str | None = Header(default=None)):
-    client = _graph_client_from_header(authorization)
-    folders = await client.list_folders(include_hidden=include_hidden)
-    return [folder.as_dict() for folder in folders]
-
-
 @router.post("/sync/graph")
-async def sync_graph(folder: str = "Inbox", include_subfolders: bool = True, top_per_folder: int = 25, authorization: str | None = Header(default=None), db: Session = Depends(get_db)):
-    client = _graph_client_from_header(authorization)
-    try:
-        messages = await (
-            client.list_messages_recursive(folder, top_per_folder=top_per_folder)
-            if include_subfolders
-            else client.list_messages(folder=folder, top=top_per_folder)
-        )
-    except ValueError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
+async def sync_graph(folder: str = "Inbox", authorization: str | None = Header(default=None), db: Session = Depends(get_db)):
+    if not authorization or not authorization.lower().startswith("bearer "):
+        raise HTTPException(status_code=401, detail="Bearer Microsoft Graph token required")
+    messages = await GraphClient(authorization.split(" ", 1)[1]).list_messages(folder=folder)
     created = 0
     for raw in messages:
         if not db.query(EmailMessage).filter(EmailMessage.graph_id == raw["graph_id"]).first():
             db.add(EmailMessage(**raw)); created += 1
     db.commit()
-    return {"folder": folder, "include_subfolders": include_subfolders, "messages_seen": len(messages), "messages_created": created}
+    return {"folder": folder, "messages_seen": len(messages), "messages_created": created}
 
 
 @router.get("/tasks", response_model=list[TaskOut])
@@ -115,9 +102,3 @@ def _parse_dt(value):
         return datetime.fromisoformat(str(value).replace("Z", "+00:00")).replace(tzinfo=None)
     except ValueError:
         return None
-
-
-def _graph_client_from_header(authorization: str | None) -> GraphClient:
-    if not authorization or not authorization.lower().startswith("bearer "):
-        raise HTTPException(status_code=401, detail="Bearer Microsoft Graph token required")
-    return GraphClient(authorization.split(" ", 1)[1])

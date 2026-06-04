@@ -23,11 +23,6 @@ flowchart LR
   LangGraph -. optional explicit setting .-> OpenAI[OpenAI API]
 ```
 
-
-### Hierarchical folder support
-
-The Microsoft Graph sync layer resolves top-level folders, nested paths such as `Inbox/Important` and `Contract Management/Automation Project`, and raw Graph folder ids. Recursive sync is enabled by default for `/api/sync/graph`, so child folders under the selected root are included.
-
 ### Agents
 
 - Email Classification Agent
@@ -39,7 +34,7 @@ The Microsoft Graph sync layer resolves top-level folders, nested paths such as 
 
 ## Repository layout
 
-- `backend/app` - FastAPI local API, SQLite models, recursive mailbox sync services, LangGraph agents.
+- `backend/app` - FastAPI local API, SQLite models, mailbox sync services, LangGraph agents.
 - `frontend/src` - React/TypeScript Outlook task pane using Fluent UI.
 - `manifests/outlook-addin.xml` - Office add-in manifest.
 - `installer/ai-mailbox-manager.iss` - Inno Setup Windows installer configuration.
